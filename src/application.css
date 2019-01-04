@@ -1,0 +1,10 @@
+/**
+ * @author Ann Mai
+ */
+
+.root {
+	
+    -fx-background-color: linear-gradient(to top, #BCD1FF, #ABB5FF);
+    -fx-fill-width : true;
+
+}
