@@ -14,3 +14,4 @@ A JavaFX game featuring a Kitty, Balloons, and Grim Reapers.
 - [ ] Kitty cannot go offscreen
 
 Tools used: Eclipse, Notepad++, Photoshop
+Images copyrighted by resepective owners.
