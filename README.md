@@ -11,7 +11,7 @@ A JavaFX game featuring a Kitty, Balloons, and Grim Reapers.
 - [ ] Collisions with other assests
 - [ ] Score calculation
 - [ ] Game start up screen
-- [ ] Kitty cannot go offscreen
+- [ ] Enforce Screen Bounds
 
 Tools used: Eclipse, Notepad++, Photoshop
 ###### Graphics are not my own and are used for educational purposes only. Graphics are copyrighted by respective owners.
