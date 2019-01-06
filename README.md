@@ -14,4 +14,3 @@ A JavaFX game featuring a Kitty, Balloons, and Grim Reapers.
 - [ ] Enforce screen bounds
 
 Tools used: Eclipse, Notepad++, Photoshop
-###### Graphics are not my own and are used for educational purposes only. Graphics are copyrighted by respective owners.
