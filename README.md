@@ -1,8 +1,7 @@
-![alt text](http://33secondstomars.org/ann/projects/screenshots/videosample.gif)
+![videosample](http://33secondstomars.org/ann/projects/screenshots/videosample.gif)
 
 # javaFX_kittyballoon
 A JavaFX game featuring a Kitty, Balloons, and Grim Reapers.
-(not for commercial release)
 
 ### Implementation so far...
 - [x] Factory creation design pattern for the animated images
