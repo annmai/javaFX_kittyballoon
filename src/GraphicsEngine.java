@@ -1,9 +1,17 @@
 package kittyballoon;
 
 import java.util.ArrayList;
+
+import javafx.animation.FadeTransition;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
+
 
 /**
  * @author Ann Mai
@@ -12,21 +20,30 @@ import javafx.scene.layout.Pane;
 class GraphicsEngine {
 	
 	private Pane root;
-	private AnimatedImageFactory graphicsFactory = new AnimatedImageFactory();
-	private ArrayList<ImageView> clouds = new ArrayList<ImageView>();
-	private ArrayList<AnimatedImage> presents = new ArrayList<>();
-	private ArrayList<AnimatedImage> reapers = new ArrayList<>();
-	private ArrayList<AnimatedImage> balloons = new ArrayList<>();
-	private ArrayList<AnimatedImage> popped_balloons = new ArrayList<>();
+	private AnimatedImageFactory graphicsFactory;
+	private ArrayList<ImageView> clouds;
+	private ArrayList<AnimatedImage> presents;
+	private ArrayList<AnimatedImage> reapers;
+	private ArrayList<AnimatedImage> balloons;
+	private ArrayList<AnimatedImage> popped_balloons;
 	private Kitty cat;
+	private double score;
 	
 	GraphicsEngine(Pane root, Kitty cat) {
 		this.root = root;
 		this.cat = cat;
+		this.score = 0;
+		
+		graphicsFactory = new AnimatedImageFactory();
+		clouds = new ArrayList<ImageView>();
+		presents = new ArrayList<>();
+		reapers = new ArrayList<>();
+		balloons = new ArrayList<>();
+		popped_balloons = new ArrayList<>();
 	}
 	
 	void initializeGraphics() {
-	
+		
 		generateClouds();
 		generateKitty(cat);
 		generateGrimReapers();
@@ -55,21 +72,100 @@ class GraphicsEngine {
     // detects and displays appropriate images upon collision
     void monitorCollisons() {
     	
+    	// handle collisions with red balloons
     	for(int i = 0; i < balloons.size(); ++i) {
     		
     		Balloon balloonObj = (Balloon) balloons.get(i);
     		ImageView balloon = balloonObj.getGraphics();
     		
     		if(cat.getGraphics().getBoundsInParent().intersects(balloon.getBoundsInParent())) {
-    			popped_balloons.add(balloonObj);
-   
+    			popped_balloons.add(balloonObj); 			
+    			score += 0.25;
     		}	
     	}
+    	
+    	// handle collisions with presents
+    	for(int i = 0; i < presents.size(); ++i) {
+    		
+    		Present presentObj = (Present) presents.get(i);
+    		ImageView present = presentObj.getGraphics();
+    		
+    		if(cat.getGraphics().getBoundsInParent().intersects(present.getBoundsInParent())) {
+    			present.setY(-50);	
+    			Text text = new Text();
+    	        text.setFont(Font.font(Font.getDefault().getName(), FontWeight.BOLD, 33));
+    	        text.setFill(Color.HOTPINK);
+    	        text.setText("+50 Points!");
+    	        text.setTranslateY(cat.getGraphics().getTranslateY());
+    	        text.setTranslateX(cat.getGraphics().getTranslateX());
+    			root.getChildren().add(text);
+    			
+    		     FadeTransition ft = new FadeTransition(Duration.millis(2000), text);
+    		     ft.setFromValue(1.0);
+    		     ft.setToValue(0);
+    		     ft.setCycleCount(1);
+    		 
+    		     ft.play();
+    			
+    			score += 50;
+    		}	
+    	}
+    	
+    	// Game over if cat goes out of screen bounds
+    	if(checkOutOfBounds() || collidedWithReaper()) {
+    		Main.gameLoop.stop();
+    		Main.isGameOver = true;
+        	GameOverLabel gameOverLabel = new GameOverLabel(Main.SCENE_WIDTH/2, Main.SCENE_HEIGHT/2);
+            root.getChildren().add(gameOverLabel);
+            root.getChildren().get(1).setOpacity(0);  
+    	}
+    		
+    	
+    }
+    
+    private boolean collidedWithReaper() {
+    	
+    	for(int i = 0; i < reapers.size(); ++i) {
+    		
+    		GrimReaper reaperObj = (GrimReaper) reapers.get(i);
+    		ImageView reaper = reaperObj.getGraphics();
+    		
+    		if(cat.getGraphics().getBoundsInParent().intersects(reaper.getBoundsInParent())) {
+    			cat.down.setByY(Main.SCENE_HEIGHT);
+    			cat.gravity.stop();
+    			cat.down.play();
+    			return true;
+    		}	
+    	}
+    	return false;
+    }
+    
+    private boolean checkOutOfBounds() {
+    	
+    	// -- for debugging --
+    	//System.out.println(cat.getGraphics().getTranslateY());
+    	//System.out.println(Main.SCENE_HEIGHT);
+    	
+        if (cat.getGraphics().getTranslateY() > Main.SCENE_HEIGHT) {
+            return true;
+        }
+        
+        return false;
     }
     
     ArrayList<AnimatedImage> getPoppedBalloonsList() {
     	return popped_balloons;
     }
+    
+    ArrayList<AnimatedImage> getGrimReapersList() {
+    	return reapers;
+    }
+    
+    int getScore() {
+    	return (int) Math.floor(score);
+    }
+    
+    
     
     // generates clouds randomly on the root pane
     private void generateClouds() {

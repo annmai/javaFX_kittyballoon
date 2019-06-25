@@ -14,9 +14,9 @@ class Kitty extends AnimatedImage {
     private TranslateTransition forward;
     private TranslateTransition back;
     private TranslateTransition up;
-    private TranslateTransition down;
+    TranslateTransition down;
+    TranslateTransition gravity;
     private RotateTransition rotate;
-    private TranslateTransition gravity;
     private final double MOVEMENT_OFFSET = 120;
     private final double MOVEMENT_ANGLE = 20;
 

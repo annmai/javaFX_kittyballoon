@@ -24,8 +24,10 @@ public class Main extends Application {
 	private Pane root;
 	private GraphicsEngine graphicsEngine;
     private final double FPS = 30;
-    private Kitty cat = new Kitty();
-    Timeline gameLoop;
+    private Kitty cat;
+    private ScoreLabel scoreLabel = new ScoreLabel(Main.SCENE_WIDTH,0);
+    static Timeline gameLoop;
+    static boolean isGameOver = false;
 	
 	
 	@Override
@@ -33,7 +35,6 @@ public class Main extends Application {
 		
 		try {
 			root = new Pane();
-			graphicsEngine = new GraphicsEngine(root, cat);
 			initializeGame();
 			
 			Scene scene = new Scene(root, SCENE_WIDTH , SCENE_HEIGHT);
@@ -44,23 +45,28 @@ public class Main extends Application {
 			
 	        scene.onKeyPressedProperty().bind(root.onKeyPressedProperty());
 	        
+	        
 	        root.setOnKeyPressed(keyEvent -> {
 	        	
 	        	KeyCode keycode = keyEvent.getCode();
 	        	
-	            if (keycode.equals(KeyCode.RIGHT))
+	            if (keycode.equals(KeyCode.RIGHT) && !isGameOver)
 	            	cat.moveForward();
 	            
-	            else if(keycode.equals(KeyCode.LEFT))
+	            else if(keycode.equals(KeyCode.LEFT) && !isGameOver)
 	            	cat.moveBackward();
 	            
-	            else if(keycode.equals(KeyCode.SPACE) || keycode.equals(KeyCode.UP))
+	            else if((keycode.equals(KeyCode.SPACE) || keycode.equals(KeyCode.UP)) && !isGameOver)
 	            	cat.moveUp();
 	            
-	            else if(keycode.equals(KeyCode.DOWN))
+	            else if(keycode.equals(KeyCode.DOWN) && !isGameOver)
 	            	cat.moveDown();
+	            
+	            else if(isGameOver && keycode.equals(KeyCode.ENTER))
+	            	initializeGame();
+	            
 	            else {
-	            	
+	            	// do nothing
 	            }
 	                      
 	        });
@@ -73,6 +79,16 @@ public class Main extends Application {
 	
 	private void initializeGame() {
 		
+		root.getChildren().clear();
+		isGameOver = false;
+		
+		// add score label to root pane
+	    scoreLabel.setOpacity(.8);
+	    scoreLabel.setText("Score: 0");
+	    root.getChildren().add(scoreLabel);
+	    
+		cat = new Kitty();
+		graphicsEngine = new GraphicsEngine(root, cat);
 		graphicsEngine.initializeGraphics();
 
 		// construct new time line that will serve as the game loop
@@ -81,15 +97,17 @@ public class Main extends Application {
             public void handle(ActionEvent e) {
              
             	graphicsEngine.scrollGraphics();
+            	graphicsEngine.refreshFrames(graphicsEngine.getGrimReapersList(), Cycle.INDEFINITE);
             	graphicsEngine.monitorCollisons();
             	graphicsEngine.refreshFrames(graphicsEngine.getPoppedBalloonsList(), Cycle.ONCE);
-            		
+            	scoreLabel.setText("Score: " + graphicsEngine.getScore());	
             }
             	
         }));
         
         gameLoop.setCycleCount(Animation.INDEFINITE);;
         gameLoop.play();
+        
 	}
     
     
