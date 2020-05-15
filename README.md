@@ -1,6 +1,6 @@
 ![videosample](http://33secondstomars.org/ann/projects/screenshots/kittybaloondemoshort.gif)
 
-# Kitty Baloon!
+# Kitty Balloon!
 A JavaFX game featuring a Kitty, Balloons, Presents, and Grim Reapers. The object of the game is gain as many points as possible by popping balloons and collecting presents all the while avoiding the deathly reapers.
 
 ### Implementation Completed.
